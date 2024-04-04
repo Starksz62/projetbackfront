@@ -5,7 +5,7 @@ let token;
 const authHeader = req.headers.authorization || req.headers.Authorization;
 if (authHeader && authHeader.startsWith("Bearer ")) {
     token = authHeader.split(" ")[1];
-    jwt.verify(token, process.env.APP_SECRET, (err, decoded) => {
+    jwt.verify(token, process.env.APP_TOKEN, (err, decoded) => {
         if(err) {
             return res.status(401).json({ message: "L'utilisateur n'est pas autorisé." });
         }else {

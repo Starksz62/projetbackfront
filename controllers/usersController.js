@@ -1,6 +1,7 @@
 const models = require("../modelsProviders");
 const argon2 = require("argon2")
 const jwt = require("jsonwebtoken");
+const Joi = require('joi');
 
 const getUsers = (req, res) => {
   res.status(200).send({ message: "get all users" });
@@ -31,19 +32,22 @@ const modifyUser = async (req, res) => {
 
 const userLogin = async (req, res,next ) => {
 const {mail, password} = req.body;
+
+ const schema = Joi.object({
+    mail: Joi.string().email().required(),
+    password: Joi.string().min(6).required()
+  });
+
 try {
-  const userAvailable = await models.user.findByEmail(mail);
-if(!userAvailable) {
-  return res.sendStatus(422)
-}
-const validPassword = await argon2.verify(userAvailable.password, password);
-if (!validPassword) {
-  return res.status(401).json({ message: "Mot de passe incorrect." });
+const userAvailable = await models.user.findByEmail(mail);
+const validPassword = userAvailable ? await argon2.verify(userAvailable.password, password) : false;
+if (!userAvailable || !validPassword) {
+  return res.status(401).json({ message: "Mot de passe ou email incorrect." });
 }
 delete userAvailable.hashed_password;
 const accessToken = jwt.sign({
   id: userAvailable.id, username : userAvailable.username, mail : userAvailable.mail 
-},process.env.APP_SECRET,
+},process.env.APP_TOKEN,
 {
   expiresIn: "1h",
 })
