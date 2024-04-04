@@ -8,9 +8,18 @@ const getBooks = async (req, res, next) => {
     next(err);
   }
 };
-const getBooksById = (req, res) => {
-    const { id } = req.params;
-    res.status(200).send({ message: `Get book with ID ${id}` });
+const getBooksById = async (req, res) => {
+  try {
+    const book = await models.book.getBookById(req.params.id);
+    if (!book) {
+      res.sendStatus(404);
+    } else {
+      res.json(book);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
   };
   const createBook = async (req, res,next) => {
     const book = req.body;
@@ -24,12 +33,27 @@ const getBooksById = (req, res) => {
       next(err);
     }
 }
-const modifyBook = (req, res) => {
+const updateBook = async (req, res) => {
     const { id } = req.params;
-    res.status(201).send({message: `Book ${id} modified`});
-}
+    const book = req.body;
+    if (req.file) {
+      book.picture = req.file.path;
+    } try {
+    book.id = id;
+    const result = await models.book.updateBook(book);
+    if (result.affectedRows === 0) {
+      res.sendStatus(404);
+    } else {
+      res.sendStatus(204);
+    }
+  } catch (err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+    };
+
 const deleteBook = (req, res) => {
     const { id } = req.params;
     res.send({message: `Book ${req.params.id} deleted`});
 }
-module.exports = {getBooks,getBooksById,createBook,modifyBook,deleteBook}
+module.exports = {getBooks,getBooksById,createBook,updateBook,deleteBook}
