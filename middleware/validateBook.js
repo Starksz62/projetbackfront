@@ -38,10 +38,10 @@ const { error } = bookSchema.validate(
   if (error) {
     res.status(422).json({ validationErrors: error.details });
     error.details.forEach((errorItem) => {
-      console.info("Error list :", errorItem.message);
+      console.log("Error list :", errorItem.message);
     });
   } else {
-    console.info("Data validated successfully:", req.body);
+    console.log("Data validated successfully:", req.body);
     next();
   }
 }
