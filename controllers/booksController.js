@@ -14,6 +14,8 @@ const getBooksById = (req, res) => {
   };
   const createBook = async (req, res,next) => {
     const book = req.body;
+    if (req.file) {
+      book.picture = req.file.path; }
     try {
       const insertId = await models.book.create(book);
 

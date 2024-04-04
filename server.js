@@ -1,13 +1,14 @@
 const express = require("express");
 require("dotenv").config();
 const app = express();
-const port = process.env.APP_PORT;
+const port = process.env.APP_PORT || 5000;
 const client = require("./client")
 const cors = require("cors");
 app.use(cors());
 const router = require("./router");
 app.use(express.json());
 app.use("/api", router);
+app.use("/static", express.static("/upload"));
 
 app.listen(port, async () => {
   console.info(`Server is listening on port ${port}`);

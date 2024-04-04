@@ -19,8 +19,8 @@ class BookManagers extends AbstractManager {
       }
     async create(book) {
         const [result] = await this.database.query (
-            `INSERT INTO ${this.table} (title, rating, description, date, picture, edition_house_id, genre_id, isbn) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [book.title, book.rating, book.description, book.date, book.picture, book.edition_house_id, book.genre_id, book.isbn]
+            `INSERT INTO ${this.table} (title, rating, description, date, picture, edition_house_id,author_id, genre_id, ISBN) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [book.title, book.rating, book.description, book.date, book.picture, book.edition_house_id,book.author_id, book.genre_id, book.ISBN]
         )
         return result.insertId;
     }
